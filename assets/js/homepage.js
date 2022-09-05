@@ -1,6 +1,12 @@
-function getUserRepos() 
+function getUserRepos(user) 
 {
-    fetch("https://api.github.com/users/octocat/repos");
+    var apiURL = "https://api.github.com/users/"+user+"/repos";
+
+    fetch(apiURL).then(function(response){
+        response.json().then(function(data){
+            console.log(data);
+        });
+    });
 }
 
-getUserRepos();
+getUserRepos("MKHLink");
