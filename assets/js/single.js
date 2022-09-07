@@ -1,4 +1,6 @@
 var issueContainerEl = document.querySelector("#issues-container");
+var limitWarningEl = document.querySelector("#limit-warning");
+var repoNameEl = document.querySelector("#repo-name");
 
 function getRepoIssues(repo)
 {
@@ -8,18 +10,21 @@ function getRepoIssues(repo)
         {
             response.json().then(function(data){
                 displayIssues(data);
+
+                if(response.headers.get("Link"))
+                {
+                    displayWarning(repo);
+                }
             });
         }
         else
         {
-            alert("Request failed");
+            document.location.replace("./index.html");
         }
     });
 
-    console.log(repo);
 }
 
-getRepoIssues("MKHLink/git-it-done");
 
 function displayIssues(issues)
 {
@@ -58,3 +63,33 @@ function displayIssues(issues)
         issueContainerEl.appendChild(issueEl);
     }
 }
+
+function displayWarning(repo)
+{
+    limitWarningEl.textContent = "To see more than 30 issues, visit ";
+    
+    var linkEl = document.createElement("a");
+    linkEl.textContent = "See More Issues on GitHub.com";
+    linkEl.setAttribute("href", "https://github.com/" + repo + "/issues");
+    linkEl.setAttribute("target", "_blank");
+
+    limitWarningEl.appendChild(linkEl);
+}
+
+function getRepoName()
+{
+    var queryString = document.location.search;
+    var repoName = queryString.split("=")[1];
+   if(repoName)
+   {
+        getRepoIssues(repoName);
+        repoNameEl.textContent = repoName;
+   }
+   else
+   {
+        document.location.replace("./index.html");
+   }
+}
+
+getRepoName();
+
